@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
+const { MongoClient } = require('mongodb')
 
 /** ROUTERS */
 const indexRouter = require('./routes/index');
@@ -19,6 +20,30 @@ const app = express();
 /** LOGGING */
 app.use(logger('dev'));
 
+
+/** Connect to MongoDB **/
+async function connectDB() {
+    const url = "mongodb+srv://dbUser:tCNzw9Z0GxjJTvcd@cluster0.ml2b8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    const client = new MongoClient(url)
+
+    try {
+        await client.connect()
+        await listDatabases(client)
+    } catch (error) {
+        console.error(error)
+    } finally {
+        await client.close()
+    }
+}
+
+async function listDatabases(client) {
+    databasesList = await client.db().admin().listDatabases()
+
+    console.log("Databases")
+    databasesList.databases.forEach(db => console.log(` - ${db.name}`))
+}
+
+connectDB().catch(console.error)
 
 /** SETTING UP LOWDB */
 const adapter = new FileSync('data/db.json');
