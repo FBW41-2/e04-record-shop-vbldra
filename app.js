@@ -3,8 +3,8 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
+// const low = require("lowdb");
+// const FileSync = require("lowdb/adapters/FileSync");
 const { MongoClient } = require("mongodb");
 
 /** ROUTERS */
@@ -45,13 +45,13 @@ async function listDatabases(client) {
 connectDB().catch(console.error);
 
 /** SETTING UP LOWDB */
-const adapter = new FileSync("data/db.json");
-const db = low(adapter);
-db.defaults({
-    records: [],
-    users: [],
-    orders: [],
-}).write();
+// const adapter = new FileSync("data/db.json");
+// const db = low(adapter);
+// db.defaults({
+//     records: [],
+//     users: [],
+//     orders: [],
+// }).write();
 
 /** REQUEST PARSERS */
 app.use(express.json());
