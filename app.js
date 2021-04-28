@@ -28,10 +28,14 @@ const dBPassword = process.env.DB_PASS
 const dBUser = process.env.DB_USER
 
 /**CONNECT TO DB */
-mongoose.connect(`mongodb+srv://${dBUser}:${dBPassword}@${dBURL}`, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true
+mongoose.connect(
+    process.env.NODE_ENV == 'test' ?
+        'mongodb://localhost:27017/record-shop' :
+        `mongodb+srv://${dBUser}:${dBPassword}@${dBURL}`,
+    {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useUnifiedTopology: true
 });
 
 mongoose.connection.on("error", console.error);
