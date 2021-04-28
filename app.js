@@ -6,6 +6,8 @@ const logger = require("morgan");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const mongoose = require("mongoose");
+const getId = require('./middleware/getId')
+require('dotenv').config()
 
 /** ROUTERS */
 const indexRouter = require("./routes/index");
@@ -20,8 +22,13 @@ const app = express();
 /** LOGGING */
 app.use(logger("dev"));
 
+/** ENV VARIABLES **/
+const dBURL = process.env.DB_URL
+const dBPassword = process.env.DB_PASS
+const dBUser = process.env.DB_USER
+
 /**CONNECT TO DB */
-mongoose.connect("mongodb://localhost:27017/record-shop", {
+mongoose.connect(`mongodb+srv://${dBUser}:${dBPassword}@${dBURL}`, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true
@@ -46,6 +53,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(setCors);
+app.use(getId)
 
 /** STATIC FILES*/
 app.use(express.static(path.join(__dirname, "public")));

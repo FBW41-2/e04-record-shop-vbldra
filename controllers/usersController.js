@@ -1,7 +1,9 @@
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
-const adapter = new FileSync("data/db.json");
-const db = low(adapter);
+// const low = require("lowdb");
+// const FileSync = require("lowdb/adapters/FileSync");
+// const adapter = new FileSync("data/db.json");
+// const db = low(adapter);
+
+const User = require("../models/User")
 
 exports.getUsers = (req, res, next) => {
   const users = db.get("users").value();
@@ -10,8 +12,10 @@ exports.getUsers = (req, res, next) => {
 
 exports.getUser = (req, res, next) => {
   const { id } = req.params;
-  const user = db.get("users").find({ id });
-  res.status(200).send(user);
+  User.findById(id, (err, user) => {
+      if (err) return console.error(err)
+      res.json(user)
+  })
 };
 
 exports.deleteUser = (req, res, next) => {
