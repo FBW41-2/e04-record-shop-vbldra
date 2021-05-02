@@ -1,10 +1,20 @@
 const Record = require("../models/Record");
-
 exports.getRecords = (req, res, next) => {
-    Record.find((err, records) => {
+    const {
+        pageNumber,
+        recordsPerPage,
+        sortOrder,
+        sortField,
+        search,
+        searchField,
+    } = req.query;
+    Record.find({[searchField]: {$regex: search, $option: 'i'}}, (err, records) => {
         if (err) return console.error(err);
         res.json(records);
-    });
+    })
+        .limit(Number(recordsPerPage))
+        .skip(pageNumber * recordsPerPage)
+        .sort({ [sortField]: sortOrder });
 };
 
 exports.getRecord = (req, res, next) => {
