@@ -88,7 +88,7 @@ describe('Users Endpoints', () => {
 })
 
 beforeAll(async (done) => {
-    server = app.listen(27017, () => {
+    server = app.listen(3000, () => {
         global.agent = request.agent(server);
         done();
     });
