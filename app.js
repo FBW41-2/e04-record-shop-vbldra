@@ -3,11 +3,9 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
 const mongoose = require("mongoose");
-const getId = require('./middleware/getId')
-require('dotenv').config()
+const getId = require("./middleware/getId");
+require("dotenv").config();
 
 /** ROUTERS */
 const indexRouter = require("./routes/index");
@@ -23,41 +21,33 @@ const app = express();
 app.use(logger("dev"));
 
 /** ENV VARIABLES **/
-const dBURL = process.env.DB_URL
-const dBPassword = process.env.DB_PASS
-const dBUser = process.env.DB_USER
+const dbURL = process.env.DB_URL;
+const dbPassword = process.env.DB_PASS;
+const dbUser = process.env.DB_USER;
 
 /**CONNECT TO DB */
+const localDbURI = "mongodb://localhost:27017/record-shop"
+const atlasURI = `mongodb+srv://${dbUser}:${dbPassword}@${dbURL}`
 mongoose.connect(
-    process.env.NODE_ENV == 'test' ?
-        'mongodb://localhost:27017/record-shop' :
-        `mongodb+srv://${dBUser}:${dBPassword}@${dBURL}`,
+    process.env.NODE_ENV == 'autograding' ? localDbURI : atlasURI,
     {
         useNewUrlParser: true,
         useCreateIndex: true,
-        useUnifiedTopology: true
-});
+        useUnifiedTopology: true,
+    }
+);
 
 mongoose.connection.on("error", console.error);
-mongoose.connection.on("open", function() {
-  console.log("Database connection established...");
+mongoose.connection.on("open", function () {
+    console.log("Database connection established...");
 });
-
-/** SETTING UP LOWDB */
-const adapter = new FileSync("data/db.json");
-const db = low(adapter);
-db.defaults({
-  records: [],
-  users: [],
-  orders: []
-}).write();
 
 /** REQUEST PARSERS */
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(setCors);
-app.use(getId)
+app.use(getId);
 
 /** STATIC FILES*/
 app.use(express.static(path.join(__dirname, "public")));
@@ -69,18 +59,18 @@ app.use("/records", recordsRouter);
 app.use("/orders", ordersRouter);
 
 /** ERROR HANDLING */
-app.use(function(req, res, next) {
-  const error = new Error("Looks like something broke...");
-  error.status = 400;
-  next(error);
+app.use(function (req, res, next) {
+    const error = new Error("Looks like something broke...");
+    error.status = 400;
+    next(error);
 });
 
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500).send({
-    error: {
-      message: err.message
-    }
-  });
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500).send({
+        error: {
+            message: err.message,
+        },
+    });
 });
 
 /** EXPORT PATH */

@@ -7,7 +7,7 @@
     "watch": "DEBUG=record-shop:* nodemon --inspect ./bin/www --ignore 'data/*'",
     "seed": "node seed/seed_db.js",
     "purge": "node seed/purge_db.js",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand --verbose --watch"
   },
   "dependencies": {
     "babel-jest": "^26.6.3",

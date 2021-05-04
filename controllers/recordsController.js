@@ -1,4 +1,16 @@
 const Record = require("../models/Record");
+
+// // O Rewrite it to async-await
+// async (req...) => {
+//     try {
+//         const.... = await Records...
+//      if(!records) throw new Error("No records")
+//     } catch (err) {
+//      next(err)
+//  }
+// }
+
+// // CONNECTION WITH FRONTEND
 exports.getRecords = (req, res, next) => {
     const {
         pageNumber,
@@ -8,14 +20,26 @@ exports.getRecords = (req, res, next) => {
         search,
         searchField,
     } = req.query;
-    Record.find({[searchField]: {$regex: search, $option: 'i'}}, (err, records) => {
-        if (err) return console.error(err);
-        res.json(records);
-    })
+    const regex = new RegExp(search);
+    Record.find(
+        searchField ? { [searchField]: { $regex: regex, $options: "i" } } : {},
+        (err, records) => {
+            if (err) return console.error(err);
+            res.json(records);
+        }
+    )
         .limit(Number(recordsPerPage))
         .skip(pageNumber * recordsPerPage)
         .sort({ [sortField]: sortOrder });
 };
+
+// exports.getRecords = (req, res, next) => {
+//     Record.find((err, records) => {
+//             if (err) return console.error(err);
+//             res.json(records);
+//         }
+//     )
+// };
 
 exports.getRecord = (req, res, next) => {
     const { id } = req.params;
