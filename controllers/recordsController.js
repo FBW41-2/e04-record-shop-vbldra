@@ -1,73 +1,71 @@
 const Record = require("../models/Record");
 
-// // O Rewrite it to async-await
-// async (req...) => {
-//     try {
-//         const.... = await Records...
-//      if(!records) throw new Error("No records")
-//     } catch (err) {
-//      next(err)
-//  }
-// }
-
 // // CONNECTION WITH FRONTEND
-exports.getRecords = (req, res, next) => {
-    const {
-        pageNumber,
-        recordsPerPage,
-        sortOrder,
-        sortField,
-        search,
-        searchField,
-    } = req.query;
-    const regex = new RegExp(search);
-    Record.find(
-        searchField ? { [searchField]: { $regex: regex, $options: "i" } } : {},
-        (err, records) => {
-            if (err) return console.error(err);
-            res.json(records);
-        }
-    )
-        .limit(Number(recordsPerPage))
-        .skip(pageNumber * recordsPerPage)
-        .sort({ [sortField]: sortOrder });
+exports.getRecords = async (req, res, next) => {
+    try {
+        const {
+            pageNumber,
+            recordsPerPage,
+            sortOrder,
+            sortField,
+            search,
+            searchField,
+        } = req.query;
+        const regex = new RegExp(search);
+        const records = await Record.find(
+            searchField
+                ? { [searchField]: { $regex: regex, $options: "i" } }
+                : {}
+        )
+            .limit(Number(recordsPerPage))
+            .skip(pageNumber * recordsPerPage)
+            .sort({ [sortField]: sortOrder });
+        if (!records) throw new Error("Records not found");
+        res.json(records);
+    } catch (error) {
+        next(error);
+    }
 };
 
-// exports.getRecords = (req, res, next) => {
-//     Record.find((err, records) => {
-//             if (err) return console.error(err);
-//             res.json(records);
-//         }
-//     )
-// };
-
-exports.getRecord = (req, res, next) => {
-    const { id } = req.params;
-    Record.findById(id, (err, entry) => {
-        if (err) return res.json({ error: err });
-        res.json(entry);
-    });
+exports.getRecord = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const record = await Record.findById(id)
+        if (!record) throw new Error("Record not found");
+        res.json(record);
+    } catch (error) {
+        next(error);
+    }
 };
 
-exports.deleteRecord = (req, res, next) => {
-    const { id } = req.params;
-    Record.findByIdAndRemove(id, (err, entry) => {
-        if (err) return res.json({ error: err });
-        res.json({ deleted: entry });
-    });
+exports.deleteRecord = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const record = await Record.findByIdAndRemove(id)
+        if (!record) throw new Error("Cannot delete. Record not found");
+        res.json(record);
+    } catch (error) {
+        next(error);
+    }
 };
 
-exports.updateRecord = (req, res, next) => {
-    const { id } = req.params;
-    Record.findByIdAndUpdate(id, req.body, { new: true }, (err, entry) => {
-        if (err) return { error: err };
-        res.json(entry);
-    });
+exports.updateRecord = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const record = await Record.findByIdAndUpdate(id, req.body, { new: true })
+        if (!record) throw new Error("Cannot update. Record not found");
+        res.json(record);
+    } catch (error) {
+        next(error);
+    }    
 };
 
-exports.addRecord = (req, res, next) => {
-    Record.create(req.body, (err, entry) => {
-        if (err) return res.json({ error: err });
-        res.json(entry);
-    });
+exports.addRecord = async (req, res, next) => {
+    try {
+        const record = await Record.create()
+        if (!record) throw new Error("Cannot add new record");
+        res.json(record);
+    } catch (error) {
+        next(error);
+    }    
 };
