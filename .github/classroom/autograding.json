@@ -3,23 +3,30 @@
     {
       "name": "users endpoints",
       "setup": "npm install",
-      "run": "NODE_ENV=autograding npm test -- __tests__/endpoints-users.js",
+      "run": "AUTOGRADING=true npm test -- __tests__/endpoints-users.js",
       "timeout": 10,
       "points": 4
     },
     {
       "name": "records endpoints",
       "setup": "npm install",
-      "run": "NODE_ENV=autograding npm test -- __tests__/endpoints-records.js",
+      "run": "AUTOGRADING=true npm test -- __tests__/endpoints-records.js",
       "timeout": 10,
       "points": 4
     },
     {
       "name": "orders endpoints",
       "setup": "npm install",
-      "run": "NODE_ENV=autograding npm test -- __tests__/endpoints-orders.js NODE_ENV=autograding",
+      "run": "AUTOGRADING=true npm test -- __tests__/endpoints-orders.js",
       "timeout": 10,
       "points": 4
+    },
+    {
+      "name": "cors",
+      "setup": "npm install",
+      "run": "AUTOGRADING=true npm test -- __tests__/cors.js",
+      "timeout": 10,
+      "points": 2
     }
   ]
 }
