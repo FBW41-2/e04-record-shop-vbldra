@@ -1,39 +1,54 @@
-const User = require("../models/User")
+const User = require("../models/User");
 
-exports.getUsers = (req, res, next) => {
-    User.find((err, users) => {
-        if (err) return console.error(err);
+exports.getUsers = async (req, res, next) => {
+    try {
+        const users = await User.find();
+        if (!users) throw new Error("Users not found");
         res.json(users);
-    });
+    } catch (error) {
+        next(error);
+    }
 };
 
-exports.getUser = (req, res, next) => {
-    const { id } = req.params;
-    User.findById(id, (err, entry) => {
-        if (err) return res.json({ error: err });
-        res.json(entry);
-    });
+exports.getUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        if (!user) throw new Error("User not found");
+        res.json(user);
+    } catch (error) {
+        next(error);
+    }
 };
 
-exports.deleteUser = (req, res, next) => {
-    const { id } = req.params;
-    User.findByIdAndRemove(id, (err, entry) => {
-        if (err) return res.json({ error: err });
-        res.json({ deleted: entry });
-    });
+exports.deleteUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByIdAndRemove(id);
+        if (!user) throw new Error("Cannot delete. User not found");
+        res.json(user);
+    } catch (error) {
+        next(error);
+    }
 };
 
-exports.updateUser = (req, res, next) => {
-    const { id } = req.params;
-    User.findByIdAndUpdate(id, req.body, { new: true }, (err, entry) => {
-        if (err) return { error: err };
-        res.json(entry);
-    });
+exports.updateUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByIdAndUpdate(id, req.body, { new: true });
+        if (!user) throw new Error("Cannot update. User not found");
+        res.json(user);
+    } catch (error) {
+        next(error);
+    }
 };
 
-exports.addUser = (req, res, next) => {
-    User.create(req.body, (err, entry) => {
-        if (err) return res.json({ error: err });
-        res.json(entry);
-    });
+exports.addUser = async (req, res, next) => {
+    try {
+        const user = await User.create();
+        if (!user) throw new Error("Cannot add new user");
+        res.json(user);
+    } catch (error) {
+        next(error);
+    }
 };
