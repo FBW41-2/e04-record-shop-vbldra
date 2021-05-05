@@ -29,7 +29,7 @@ const dbUser = process.env.DB_USER;
 const localDbURI = "mongodb://localhost:27017/record-shop"
 const atlasURI = `mongodb+srv://${dbUser}:${dbPassword}@${dbURL}`
 mongoose.connect(
-    process.env.NODE_ENV == 'autograding' ? localDbURI : atlasURI,
+    process.env.DB_URL ? atlasURI : localDbURI,
     {
         useNewUrlParser: true,
         useCreateIndex: true,
