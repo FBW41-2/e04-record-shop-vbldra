@@ -45,7 +45,8 @@ exports.updateUser = async (req, res, next) => {
 
 exports.addUser = async (req, res, next) => {
     try {
-        const user = await User.create();
+        const entry = req.body
+        const user = await User.create(entry);
         if (!user) throw new Error("Cannot add new user");
         res.json(user);
     } catch (error) {

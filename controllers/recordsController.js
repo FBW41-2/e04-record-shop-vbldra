@@ -62,7 +62,8 @@ exports.updateRecord = async (req, res, next) => {
 
 exports.addRecord = async (req, res, next) => {
     try {
-        const record = await Record.create()
+        const entry = req.body
+        const record = await Record.create(entry)
         if (!record) throw new Error("Cannot add new record");
         res.json(record);
     } catch (error) {

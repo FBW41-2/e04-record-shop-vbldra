@@ -1,3 +1,4 @@
+const { request } = require("express");
 const Order = require("../models/Order");
 
 
@@ -46,7 +47,8 @@ exports.updateOrder = async (req, res, next) => {
 
 exports.addOrder = async (req, res, next) => {
     try {
-        const order = await Order.create()
+        const entry = req.body
+        const order = await Order.create(entry)
         if (!order) throw new Error("Cannot add new order");
         res.json(order);
     } catch (error) {
