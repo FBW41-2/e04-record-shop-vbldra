@@ -13,7 +13,7 @@ describe('Users Endpoints', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
+            password: "Weff3wq4f%"
         })
         const res = await request(app).get('/users')
         expect(res.statusCode).toBe(200)
@@ -27,7 +27,7 @@ describe('Users Endpoints', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
+            password: "Weff3wq4f%"
         })
         await fakeUser.save()
         const compUser = fakeUser.toObject()
@@ -43,7 +43,7 @@ describe('Users Endpoints', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
+            password: "Weff3wq4f%"
         })
         await fakeUser.save()
         let checkUser = await User.findById(fakeUser.id)
@@ -60,7 +60,7 @@ describe('Users Endpoints', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
+            password: "Weff3wq4f%"
         })
         await fakeUser.save()
         const fakeEmail = 'newfakemail@mail.com'
@@ -76,7 +76,7 @@ describe('Users Endpoints', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
+            password: "Weff3wq4f%"
         }
         const res = await request(app)
             .post(`/users`)

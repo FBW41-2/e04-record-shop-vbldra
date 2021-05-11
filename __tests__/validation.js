@@ -14,7 +14,7 @@ describe('Validation', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: wrongMail,
-            password: faker.internet.password(10)
+            password: "Weff3wq4f%"
         }
         const res = await request(app)
             .post(`/users`)
@@ -30,7 +30,7 @@ describe('Validation', () => {
         const wrongData2 = {
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password(10)
+            password: "Weff3wq4f%"
         }
         const res = await request(app)
             .post(`/users`)
@@ -64,7 +64,7 @@ describe('Validation', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password(10)
+            password: "Weff3wq4f%"
         }
         const res = await request(app)
             .post(`/users`)

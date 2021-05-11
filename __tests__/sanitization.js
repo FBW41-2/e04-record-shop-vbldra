@@ -17,7 +17,7 @@ describe('Sanitization', () => {
             firstName: faker.name.firstName(),
             lastName: faker.name.lastName(),
             email: unsanitizedEmail,
-            password: faker.internet.password()
+            password: "Weff3wq4f%"
         }
         
         const res = await request(app)
@@ -35,7 +35,7 @@ describe('Sanitization', () => {
             firstName: unsanitizedFirstName,
             lastName: faker.name.lastName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
+            password: "Weff3wq4f%"
         }
         const res = await request(app)
             .post(`/users`)
