@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const createError = require("http-errors");
 const { validationResult } = require("express-validator");
+const bcrypt = require('bcrypt')
 
 exports.getUsers = async (req, res, next) => {
   try {
@@ -35,8 +36,13 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
+    const userData = req.body
+    if(userData.password) {
+        userData.password = await bcrypt.hash(userData.password, 10)
+    }
+
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    const user = await User.findByIdAndUpdate(req.params.id, userData, {
       new: true,
       runValidators: true
     });
@@ -55,6 +61,7 @@ exports.addUser = async (req, res, next) => {
     }
 
     const user = new User(req.body);
+    
     await user.save();
     res.status(200).send(user);
   } catch (e) {
