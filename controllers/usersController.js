@@ -23,7 +23,7 @@ exports.getUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
+        const user = await User.findByIdAndDelete(req.params.id).select('-password');
         if (!user) throw new createError.NotFound();
         res.status(200).send(user);
     } catch (e) {
