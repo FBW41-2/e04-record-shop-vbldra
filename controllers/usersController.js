@@ -61,7 +61,7 @@ exports.addUser = async (req, res, next) => {
     }
 
     const user = new User(req.body);
-    
+    user.password = await bcrypt.hash(user.password, 10)
     await user.save();
     res.status(200).send(user);
   } catch (e) {
