@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const Address = require('./Address')
 
 const UserSchema = new Schema(
   {
@@ -11,13 +12,15 @@ const UserSchema = new Schema(
       type: String,
       required: true
     },
+    address: Address,   // 1 to 1 connection
     email: {
       type: String,
       required: true
     },
     password: {
       type: String,
-      required: true
+      required: true,
+      select: false     // not use by default
     }
   },
   {

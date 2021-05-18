@@ -7,8 +7,9 @@ const OrderSchema = new Schema({
         required: true,
     },
     record: [
+        // one to many
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'Record'
         },
     ],
