@@ -3,8 +3,8 @@ const createError = require("http-errors");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const jwt = require('jsonwebtoken')
 
-const tokens = {};
 
 exports.getUsers = async (req, res, next) => {
     try {
@@ -41,10 +41,11 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
-    const token = req.headers["x-auth"];
+
     const userData = req.body;
 
     const loggedInUser = await User.findOne({ token: token });
+    
     if (!token || !loggedInUser) {
         return next({ message: "Permission denied. You have to log in" });
     }
@@ -95,7 +96,8 @@ exports.login = async (req, res, next) => {
             password
         );
         if (isCorrectPassword) {
-            const token = crypto.randomBytes(30).toString("hex");
+            // const token = crypto.randomBytes(30).toString("hex");
+            const token = jwt.sign(user.toJSON(), process.env.TOKEN_SECRET)
             await User.findByIdAndUpdate(user.id, { token: token });
             res.set({ "x-auth": token }).json({
                 message: "Congrats! You're logged in!",

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { validateInputs } = require("../middleware/validator");
 const { userValidationRules } = require("../lib/validation/userRules");
+const checkLogin = require('../middleware/checkLogin')
 
 const {
   getUsers,
@@ -21,7 +22,7 @@ router
   .route("/:id")
   .get(getUser)
   .delete(deleteUser)
-  .put(updateUser);
+  .put(checkLogin, updateUser);
 
 router.post('/login', login)
 
