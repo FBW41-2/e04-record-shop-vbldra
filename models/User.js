@@ -22,7 +22,8 @@ const UserSchema = new Schema(
       type: String,
       required: true
     },
-    address: Address
+    address: Address,
+    token: String
   },
   {
     toObject: {
@@ -35,7 +36,9 @@ const UserSchema = new Schema(
 );
 
 UserSchema.pre('findOneAndUpdate', async function(next) {
-    this.password = await bcrypt.hash(this.password || this._update.password, 10)
+    if(this._update.password) {
+        this.password = await bcrypt.hash(this.password || this._update.password, 10)
+    }
     next()
 })
 
