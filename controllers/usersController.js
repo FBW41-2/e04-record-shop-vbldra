@@ -63,8 +63,24 @@ exports.addUser = async (req, res, next) => {
     const user = new User(req.body);
     user.password = await bcrypt.hash(user.password, 10)
     await user.save();
+
     res.status(200).send(user);
   } catch (e) {
     next(e);
   }
 };
+
+exports.login = async (req, res, next) => {
+    try {
+        const user = await User.findById(id).select('+password')
+        const password = user.password
+        const isCorrectPassword = await bcrypt.compare(inputPassword, password) 
+        if (isCorrectPassword) {
+            res.json({message: "Congrats! You're logged in!"})
+        } else {
+            next({error: "Wrong password"})
+        }
+    } catch (e) {
+        next(e)
+    }
+}
