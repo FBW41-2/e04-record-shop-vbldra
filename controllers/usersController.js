@@ -4,7 +4,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
-const tokens = {}
+const tokens = {};
 
 exports.getUsers = async (req, res, next) => {
     try {
@@ -41,12 +41,12 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
-    const token = req.headers.key
+    const token = req.headers["x-auth"];
     const userData = req.body;
 
-    const loggedInUser = tokens[req.headers.key]
+    const loggedInUser = await User.findOne({ token: token });
     if (!token || !loggedInUser) {
-        return next({message: "Permission denied. You have to log in"})
+        return next({ message: "Permission denied. You have to log in" });
     }
 
     if (userData.password) {
@@ -73,10 +73,11 @@ exports.addUser = async (req, res, next) => {
         }
 
         const user = new User(req.body);
+        const token = crypto.randomBytes(30).toString("hex");
         user.password = await bcrypt.hash(user.password, 10);
+        user.token = token;
         await user.save();
-
-        res.status(200).send(user);
+        res.set({ "x-auth": token }).json(user);
     } catch (e) {
         next(e);
     }
@@ -95,8 +96,10 @@ exports.login = async (req, res, next) => {
         );
         if (isCorrectPassword) {
             const token = crypto.randomBytes(30).toString("hex");
-            tokens[token] = user
-            res.json({ message: "Congrats! You're logged in!", token: token});
+            await User.findByIdAndUpdate(user.id, { token: token });
+            res.set({ "x-auth": token }).json({
+                message: "Congrats! You're logged in!",
+            });
         } else {
             next({ message: "Wrong password" });
         }
