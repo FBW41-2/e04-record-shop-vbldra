@@ -7,6 +7,6 @@ module.exports = (req, res, next) => {
         req.user = tokenData
         next()
     } catch (error) {
-        next(error)
+        next({message: "Please log in first.."})
     }
 }

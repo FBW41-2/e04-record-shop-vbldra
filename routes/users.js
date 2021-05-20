@@ -21,7 +21,7 @@ router
 router
   .route("/:id")
   .get(getUser)
-  .delete(deleteUser)
+  .delete(checkLogin, deleteUser)
   .put(checkLogin, updateUser);
 
 router.post('/login', login)

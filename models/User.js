@@ -23,6 +23,11 @@ const UserSchema = new Schema(
       required: true
     },
     address: Address,
+    role: {
+        type: String,
+        enum: ["Admin", "User"],
+        required: true
+    },
     token: String
   },
   {

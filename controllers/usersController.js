@@ -41,20 +41,13 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
-
     const userData = req.body;
-
-    const loggedInUser = await User.findOne({ token: token });
-    
-    if (!token || !loggedInUser) {
-        return next({ message: "Permission denied. You have to log in" });
-    }
-
-    if (userData.password) {
-        userData.password = await bcrypt.hash(userData.password, 10);
-    }
-
     try {
+        // Change password
+        if (userData.password) {
+            userData.password = await bcrypt.hash(userData.password, 10);
+        }
+        // Change other data
         const user = await User.findByIdAndUpdate(req.params.id, userData, {
             new: true,
             runValidators: true,
@@ -72,9 +65,9 @@ exports.addUser = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
-
         const user = new User(req.body);
-        const token = crypto.randomBytes(30).toString("hex");
+        // const token = crypto.randomBytes(30).toString("hex");
+        const token = jwt.sign(user.toJSON(), process.env.TOKEN_SECRET)
         user.password = await bcrypt.hash(user.password, 10);
         user.token = token;
         await user.save();
