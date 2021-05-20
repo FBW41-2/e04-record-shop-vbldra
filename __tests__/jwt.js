@@ -58,13 +58,6 @@ describe('Create Access Token', () => {
                 'x-auth': expect.anything()
             })
         )
-        expect(checkUser.tokens).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({ 
-                    token: res.header['x-auth']
-                })
-            ])
-        )
         done()
     })
 })

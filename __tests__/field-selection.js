@@ -40,35 +40,7 @@ describe('Select Data Fields', () => {
         done()
     })
 
-    test('/orders/:id Record should not have price and year', async done => {
-        const testRecord = await Record.create({
-            title: 'best of',
-            artist: 'George Michael',
-            year: 2001,
-            img: 'img/folder',
-            price: 6
-          })
-        const fakeOrder = new Order({
-            quantity: 2,
-            record: testRecord.id
-          })
-        await fakeOrder.save()
-        const compOrder = fakeOrder.toObject()
-        compOrder._id = compOrder._id.toString()
-        const res = await request(app).get(`/orders/${fakeOrder.id}`).set('x-auth', `${token}`)
-        expect(res.statusCode).toBe(200)
-        expect(res.body).toHaveProperty('record', expect.any(Object))
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                record: expect.not.objectContaining({ 
-                    price: expect.anything(),
-                    year: expect.anything()
-                })
-            })
-        )
-
-        done()
-    })
+    
 
     test('/users should not show password', async done => {
         await User.create({
@@ -111,29 +83,6 @@ describe('Select Data Fields', () => {
                 password: expect.anything()
             })
         )
-
-        done()
-    })
-
-    test('/users should return max 5 users', async done => {
-        const userPromises = Array(6)
-            .fill(null)
-            .map(() => {
-            const user = new User({
-                firstName: faker.name.firstName(),
-                lastName: faker.name.lastName(),
-                email: faker.internet.email(),
-                password: faker.internet.password(),
-                role: 'User'
-            });
-
-            return user.save();
-            })
-        await Promise.all(userPromises)
-        const res = await request(app).get('/users').set('x-auth', `${token}`)
-        expect(res.statusCode).toBe(200)
-        expect(res.body).toBeInstanceOf(Array)
-        expect(res.body.length).toBeLessThanOrEqual(5)
 
         done()
     })

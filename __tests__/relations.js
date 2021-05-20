@@ -11,7 +11,7 @@ let server;
 let token;
 
 describe('DB Relations', () => {
-    test('order list should have record info', async done => {
+    test('order list should have records info', async done => {
         // create record
         const fakeRecord = {
             title: 'Greatest Hits special edition',
@@ -22,19 +22,26 @@ describe('DB Relations', () => {
           }
         const resRecord = await Record.create(fakeRecord)
         // create order
-        const fakeOrder = {
+        const resOrder = await Order.create({
             quantity: 1,
-            record: resRecord._id
-          }
-        const resOrder = await request(app)
-            .post(`/orders`)
-            .set('x-auth', `${token}`)
-            .send(fakeOrder)
+            records: [resRecord._id]
+          })
         const res = await request(app).get(`/orders`).set('x-auth', `${token}`)
         expect(Array.isArray(res.body)).toBeTruthy()
-        expect(res.body[0]).toHaveProperty('record')
-        expect(res.body[0].record).toHaveProperty('title')
-        expect(res.body[0].record).toHaveProperty('artist')
+
+        expect(res.body).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    records: expect.arrayContaining([
+                        expect.objectContaining({
+                            title: expect.anything(),
+                            artist: expect.anything()
+                        })
+                    ])
+                })
+            ])
+        )
+
         done()
     })
 
@@ -51,16 +58,23 @@ describe('DB Relations', () => {
         // create order
         const fakeOrder = {
             quantity: 1,
-            record: resRecord._id
+            records: [resRecord._id]
           }
         const resOrder = await request(app)
             .post(`/orders`)
             .set('x-auth', `${token}`)
             .send(fakeOrder)
         const res = await request(app).get(`/orders/${resOrder.body._id}`).set('x-auth', `${token}`)
-        expect(res.body).toHaveProperty('record')
-        expect(res.body.record).toHaveProperty('title')
-        expect(res.body.record).toHaveProperty('artist')
+        expect(res.body).toEqual(
+                expect.objectContaining({
+                    records: expect.arrayContaining([
+                        expect.objectContaining({
+                            title: expect.anything(),
+                            artist: expect.anything()
+                        })
+                    ])
+                })
+        )
         done()
     })
 })

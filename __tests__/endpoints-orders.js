@@ -105,14 +105,14 @@ describe('Orders Endpoints', () => {
           })
         const fakeOrder = {
             quantity: 1,
-            record: testRecord.id
+            records: [testRecord.id]
           }
         const res = await request(app)
             .post(`/orders`)
             .set('x-auth', `${token}`)
             .send(fakeOrder)
-        const checkOrder = await Order.findOne({'record': fakeOrder.record})
-        expect(checkOrder).toHaveProperty(['record'])
+        const checkOrder = await Order.findById(res.body._id)
+        expect(checkOrder).toHaveProperty(['quantity'])
         done()
     })
 })

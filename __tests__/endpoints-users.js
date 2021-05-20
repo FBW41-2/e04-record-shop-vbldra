@@ -37,7 +37,7 @@ describe('Users Endpoints', () => {
         delete fakeUser.password
         const res = await request(app).get(`/users/${compUser.id}`).set('x-auth', `${token}`)
         expect(res.statusCode).toBe(200)
-        expect(res.body).toEqual(expect.objectContaining(fakeUser))
+        expect(res.body).toEqual(expect.objectContaining({email: fakeUser.email}))
         done()
     })
 
