@@ -4,7 +4,7 @@ const { validationResult } = require("express-validator");
 
 exports.getUsers = async (req, res, next) => {
     try {
-        const users = await User.find().sort("lastName");
+        const users = await User.find().sort("lastName").limit(5);
         res.status(200).send(users);
     } catch (e) {
         next(e);
