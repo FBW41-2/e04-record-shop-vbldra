@@ -19,7 +19,7 @@ router
 router
   .route("/:id")
   .get(getRecord)
-  .delete(checkLogin, checkAdmin, deleteRecord)
-  .put(checkLogin, checkAdmin, updateRecord);
+  .delete(deleteRecord)
+  .put(updateRecord);
 
 module.exports = router;

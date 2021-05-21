@@ -6,7 +6,7 @@ const OrderSchema = new Schema({
     type: Number,
     required: true
   },
-  record: [
+  records: [
     {
       ref: "Record",
       type: mongoose.Schema.Types.ObjectId
