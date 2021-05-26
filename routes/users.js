@@ -2,30 +2,31 @@ const express = require("express");
 const router = express.Router();
 const { validateInputs } = require("../middleware/validator");
 const { userValidationRules } = require("../lib/validation/userRules");
-const checkLogin = require('../middleware/checkLogin')
-const checkAdmin = require('../middleware/checkAdminRole')
-
+const auth = require("../middleware/authenticator");
+const checkLogin = require("../middleware/checkLogin");
+const checkAdmin = require("../middleware/checkAdminRole");
+const { body } = require("express-validator");
 
 const {
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-  addUser,
-  login
+    getUsers,
+    getUser,
+    updateUser,
+    deleteUser,
+    addUser,
+    login,
 } = require("../controllers/usersController");
 
 router
-  .route("/")
-  .get(checkLogin, checkAdmin, getUsers)
-  .post(validateInputs(userValidationRules), addUser);
+    .route("/")
+    .get(auth, checkAdmin, getUsers)
+    .post(validateInputs(userValidationRules), addUser);
 
 router
-  .route("/:id")
-  .get(checkLogin, getUser)
-  .delete(checkLogin, deleteUser)
-  .put(checkLogin, updateUser);
+    .route("/:id")
+    .get(auth, getUser)
+    .delete(auth, deleteUser)
+    .put(auth, updateUser);
 
-router.post('/login', login)
+router.route("/login").post(login);
 
 module.exports = router;

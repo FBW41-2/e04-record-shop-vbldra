@@ -1,9 +1,6 @@
 const User = require("../models/User");
 const createError = require("http-errors");
 const { validationResult } = require("express-validator");
-const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
-
 
 exports.getUsers = async (req, res, next) => {
     try {
@@ -40,14 +37,8 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
-    const userData = req.body;
     try {
-        // Change password
-        if (userData.password) {
-            userData.password = await bcrypt.hash(userData.password, 10);
-        }
-        // Change other data
-        const user = await User.findByIdAndUpdate(req.params.id, userData, {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true,
         });
@@ -65,38 +56,30 @@ exports.addUser = async (req, res, next) => {
             return res.status(422).json({ errors: errors.array() });
         }
         const user = new User(req.body);
-        // const token = crypto.randomBytes(30).toString("hex");
-        const token = jwt.sign(user.toJSON(), process.env.TOKEN_SECRET)
-        user.password = await bcrypt.hash(user.password, 10);
-        user.token = token;
+        const token = user.generateAuthToken();
         await user.save();
-        res.set({ "x-auth": token }).json(user);
+        const data = user.getPublicFields();
+        res.status(200).header("x-auth", token).send(data);
     } catch (e) {
         next(e);
     }
 };
 
 exports.login = async (req, res, next) => {
+    const email = req.body.email;
+    const password = req.body.password;
+
     try {
-        const userCredentials = req.body;
-        const user = await User.findOne({
-            email: userCredentials.email,
-        }).select("+password");
-        const password = user.password;
-        const isCorrectPassword = await bcrypt.compare(
-            userCredentials.password,
-            password
-        );
-        if (isCorrectPassword) {
-            // const token = crypto.randomBytes(30).toString("hex");
-            const token = jwt.sign(user.toJSON(), process.env.TOKEN_SECRET)
-            await User.findByIdAndUpdate(user.id, { token: token });
-            res.set({ "x-auth": token }).json({
-                message: "Congrats! You're logged in!",
-            });
-        } else {
-            next({ message: "Wrong password" });
-        }
+        const allUsers = await User.find();
+        const user = await User.findOne({ email });
+        if (!user) throw new createError.NotFound("User not found");
+        const valid = await user.checkPassword(password);
+        if (!valid) throw new createError(401, "Password incorrect");
+
+        const data = user.getPublicFields();
+        const token = user.generateAuthToken();
+
+        res.status(200).header("x-auth", token).send(data);
     } catch (e) {
         next(e);
     }
